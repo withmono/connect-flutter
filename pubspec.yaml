@@ -1,0 +1,24 @@
+name: mono_connect
+description: The Mono Connect SDK is a quick and secure way to link bank accounts to Mono from within your Flutter app.
+homepage: https://docs.mono.co/docs/financial-data/overview
+repository: https://github.com/withmono/connect-flutter
+issue_tracker: https://github.com/withmono/connect-flutter/issues
+version: 2.0.0
+
+
+environment:
+  sdk: '>= 3.5.0 <4.0.0'
+  flutter: '>=3.24.0'
+
+dependencies:
+  equatable: ^2.0.7
+  flutter:
+    sdk: flutter
+  permission_handler: ^11.3.1
+  webview_flutter: ^4.10.0
+  webview_flutter_wkwebview: ^3.17.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  very_good_analysis: ^6.0.0
