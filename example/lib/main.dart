@@ -40,22 +40,27 @@ class _MyHomePageState extends State<MyHomePage> {
     },
     customer: const MonoCustomer(
       newCustomer: MonoNewCustomer(
-        name: "Samuel Olamide",
-        email: "samuel@neem.com",
+        name: 'Samuel Olamide',
+        email: 'samuel@neem.com',
         identity: MonoCustomerIdentity(
-          type: "bvn",
-          number: "2323233239",
+          type: 'bvn',
+          number: '2323233239',
         ),
       ),
       existingCustomer: MonoExistingCustomer(
         id: "6759f68cb587236111eac1d4",
       ),
     ),
-    selectedInstitution: const ConnectInstitution(
-      id: "5f2d08be60b92e2888287702",
-      authMethod: ConnectAuthMethod.mobileBanking,
-    ),
+    // selectedInstitution: const ConnectInstitution(
+    //   id: '5f2d08be60b92e2888287702',
+    //   authMethod: ConnectAuthMethod.mobileBanking,
+    // ),
     reference: DateTime.now().millisecondsSinceEpoch.toString(),
+    // accountId: '65bb8ab6ed5e47f3015254f6',
+    // scope: 'payments',
+    // extras: {
+    //   'payment_id': 'txreq_mwvphn2xxw',
+    // },
     onEvent: (event) {
       log(event.toString());
     },
@@ -77,6 +82,7 @@ class _MyHomePageState extends State<MyHomePage> {
             MonoConnect.launch(
               context,
               config: config,
+              // shouldReauthorise: true,
               showLogs: true,
             );
           },

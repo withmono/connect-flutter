@@ -21,13 +21,15 @@ class ConnectWebView extends StatefulWidget {
     required this.publicKey,
     required this.onSuccess,
     required this.customer,
+    this.scope = Constants.authScope,
     this.showLogs = false,
     super.key,
     this.reference,
-    this.code,
+    this.accountId,
     this.onEvent,
     this.onClose,
     this.selectedInstitution,
+    this.extras,
   });
 
   /// Creates a [ConnectWebView] instance from a [ConnectConfiguration] config
@@ -39,11 +41,13 @@ class ConnectWebView extends StatefulWidget {
   })  : publicKey = config.publicKey,
         onSuccess = config.onSuccess,
         customer = config.customer,
+        scope = config.scope,
         reference = config.reference,
-        code = config.reauthCode,
+        accountId = config.accountId,
         onEvent = config.onEvent,
         onClose = config.onClose,
-        selectedInstitution = config.selectedInstitution;
+        selectedInstitution = config.selectedInstitution,
+        extras = config.extras;
 
   /// Public key from your Mono app dashboard.
   final String publicKey;
@@ -56,12 +60,20 @@ class ConnectWebView extends StatefulWidget {
   /// Existing Customer: For existing customers, the customer object expects only the customer ID.
   final MonoCustomer customer;
 
+  /// Defines the operational scope for widget initialization.
+  ///
+  /// Available options:
+  /// `auth`
+  /// `reauth`
+  /// `payments`
+  final String scope;
+
   /// An optional reference to the current instance of Mono Connect.
   /// This value will be included in all [onEvent] callbacks for tracking purposes.
   final String? reference;
 
-  /// Re-auth token received from re-authentication endpoint
-  final String? code;
+  /// Account ID is returned from token exchange for a previously linked account.
+  final String? accountId;
 
   /// Callback triggered whenever an event is dispatched by the Mono Connect widget.
   final void Function(ConnectEvent event)? onEvent;
@@ -71,6 +83,16 @@ class ConnectWebView extends StatefulWidget {
 
   /// Allows an optional selected institution to be passed.
   final ConnectInstitution? selectedInstitution;
+
+  /// Pass custom data to the widget initializer.
+  ///
+  /// ### Example:
+  /// ```json
+  /// {
+  ///   payment_id: "PAYMENT_ID" // The `id` property returned from the Initiate Payments API.
+  /// }
+  /// ```
+  final Map<String, dynamic>? extras;
 
   /// Enables or disables detailed debug logging.
   /// Defaults to `false`.
@@ -234,20 +256,26 @@ class _ConnectWebViewState extends State<ConnectWebView> {
 
   Future<void> loadRequest() {
     final customerJson = {'customer': widget.customer.toMap()};
-    final data = json.encode(customerJson);
 
-    String? extraData;
+    final json = {
+      if (widget.accountId != null) 'account': widget.accountId,
+      if (widget.extras != null) ...widget.extras!,
+      ...customerJson,
+    };
+    final data = jsonEncode(json);
+
+    String? institution;
     if (widget.selectedInstitution != null) {
-      extraData = widget.selectedInstitution!.toJson();
+      institution = widget.selectedInstitution!.toJson();
     }
 
     final queryParameters = {
       'key': widget.publicKey,
       'version': Constants.version,
-      'scope': Constants.scope,
+      'scope': widget.scope,
       'data': data,
       if (widget.reference != null) 'reference': widget.reference,
-      if (extraData != null) 'selectedInstitution': extraData,
+      if (institution != null) 'selectedInstitution': institution,
     };
 
     final uri = Uri(
@@ -262,7 +290,7 @@ class _ConnectWebViewState extends State<ConnectWebView> {
   /// parse event from javascript channel
   void handleResponse(String body) {
     try {
-      final bodyMap = json.decode(body) as Map<String, dynamic>;
+      final bodyMap = jsonDecode(body) as Map<String, dynamic>;
       final type = bodyMap['type'] as String?;
       final data = bodyMap['data'] as Map<String, dynamic>? ?? {};
 

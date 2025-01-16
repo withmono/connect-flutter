@@ -9,7 +9,9 @@ class Constants {
 
   static const String version = '2023-12-14';
 
-  static const String scope = 'auth';
+  static const String authScope = 'auth';
+
+  static const String reAuthScope = 'reauth';
 
   static const String jsChannel = 'MonoClientInterface';
 

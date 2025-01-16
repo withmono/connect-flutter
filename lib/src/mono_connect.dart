@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mono_connect/src/connect_web_view.dart';
 import 'package:mono_connect/src/models/connect_configuration.dart';
+import 'package:mono_connect/src/utils/constants.dart';
 
 /// The Mono Connect SDK is a quick and secure way to link bank accounts to Mono from within your Flutter app.
 /// Mono Connect is a drop-in framework that handles connecting a financial institution to your app
@@ -51,13 +52,21 @@ class MonoConnect {
   static void launch(
     BuildContext context, {
     required ConnectConfiguration config,
+    bool shouldReauthorise = false,
     bool showLogs = false,
   }) {
+    assert(
+      (config.accountId != null) == shouldReauthorise,
+      'Invalid state: accountId must not be null if shouldReauthorise is true, and must be null otherwise.',
+    );
+
     Navigator.push(
       context,
       MaterialPageRoute<dynamic>(
         builder: (c) => _webView(
-          config,
+          config.copyWith(
+            scope: shouldReauthorise ? Constants.reAuthScope : null,
+          ),
           showLogs: showLogs,
         ),
       ),
@@ -76,8 +85,14 @@ class MonoConnect {
   static void launchDialog(
     BuildContext context, {
     required ConnectConfiguration config,
+    bool shouldReauthorise = false,
     bool showLogs = false,
   }) {
+    assert(
+      (config.accountId != null) == shouldReauthorise,
+      'Invalid state: accountId must not be null if shouldReauthorise is true, and must be null otherwise.',
+    );
+
     showDialog<dynamic>(
       context: context,
       builder: (_) => Padding(
@@ -85,7 +100,9 @@ class MonoConnect {
         child: ClipRRect(
           borderRadius: BorderRadius.circular(24),
           child: _webView(
-            config,
+            config.copyWith(
+              scope: shouldReauthorise ? Constants.reAuthScope : null,
+            ),
             showLogs: showLogs,
           ),
         ),
@@ -104,8 +121,14 @@ class MonoConnect {
   static void launchModalBottomSheet(
     BuildContext context, {
     required ConnectConfiguration config,
+    bool shouldReauthorise = false,
     bool showLogs = false,
   }) {
+    assert(
+      (config.accountId != null) == shouldReauthorise,
+      'Invalid state: accountId must not be null if shouldReauthorise is true, and must be null otherwise.',
+    );
+
     showModalBottomSheet<dynamic>(
       context: context,
       useSafeArea: true,
@@ -117,7 +140,9 @@ class MonoConnect {
       ),
       clipBehavior: Clip.hardEdge,
       builder: (_) => _webView(
-        config,
+        config.copyWith(
+          scope: shouldReauthorise ? Constants.reAuthScope : null,
+        ),
         showLogs: showLogs,
       ),
     );

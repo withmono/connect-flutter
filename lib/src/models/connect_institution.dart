@@ -7,9 +7,9 @@ enum ConnectAuthMethod {
   internetBanking('internet_banking'),
   mobileBanking('mobile_banking');
 
-  final String value;
-
   const ConnectAuthMethod(this.value);
+
+  final String value;
 
   static ConnectAuthMethod fromValue(String value) {
     final type =
@@ -19,14 +19,24 @@ enum ConnectAuthMethod {
   }
 }
 
-class ConnectInstitution with EquatableMixin {
-  final String id;
-  final ConnectAuthMethod authMethod;
-
+class ConnectInstitution extends Equatable {
   const ConnectInstitution({
     required this.id,
     required this.authMethod,
   });
+
+  factory ConnectInstitution.fromMap(Map<String, dynamic> map) {
+    return ConnectInstitution(
+      id: map['id'] as String,
+      authMethod: ConnectAuthMethod.fromValue(map['auth_method'] as String),
+    );
+  }
+
+  factory ConnectInstitution.fromJson(String source) =>
+      ConnectInstitution.fromMap(json.decode(source) as Map<String, dynamic>);
+
+  final String id;
+  final ConnectAuthMethod authMethod;
 
   ConnectInstitution copyWith({
     String? id,
@@ -45,17 +55,7 @@ class ConnectInstitution with EquatableMixin {
     };
   }
 
-  factory ConnectInstitution.fromMap(Map<String, dynamic> map) {
-    return ConnectInstitution(
-      id: map['id'] as String,
-      authMethod: ConnectAuthMethod.fromValue(map['auth_method'] as String),
-    );
-  }
-
   String toJson() => json.encode(toMap());
-
-  factory ConnectInstitution.fromJson(String source) =>
-      ConnectInstitution.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   String toString() => 'ConnectInstitution(id: $id, authMethod: $authMethod)';

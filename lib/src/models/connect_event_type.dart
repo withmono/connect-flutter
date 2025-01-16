@@ -37,6 +37,8 @@ enum ConnectEventType {
   /// Event value: ["mono.connect.account_selected"].
   accountSelected(Constants.ACCOUNT_SELECTED_EVENT),
 
+  // Deprecated events
+
   /// Event value: ["mono.connect.widget.closed"].
   widgetClosed(Constants.WIDGET_CLOSED_EVENT, 1),
 

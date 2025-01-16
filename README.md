@@ -76,25 +76,26 @@ import 'package:mono_connect/mono_connect.dart';
 #### Create a ConnectConfiguration
 ```dart
 final config = ConnectConfiguration(
-  publicKey: 'your_public_key',
+  publicKey: 'test_pk_...',
   onSuccess: (code) {
     log('Success with code: $code');
   },
   customer: const MonoCustomer(
     newCustomer: MonoNewCustomer(
-      name: "Samuel Olamide",
-      email: "samuel@neem.com",
+      name: 'Samuel Olamide',
+      email: 'samuel@neem.com',
       identity: MonoCustomerIdentity(
-        type: "bvn",
-        number: "2323233239",
+        type: 'bvn',
+        number: '2323233239',
       ),
     ),
+    // or
     existingCustomer: MonoExistingCustomer(
-      id: "6759f68cb587236111eac1d4",
+      id: '6759f68cb587236111eac1d4',
     ),
   ),
   selectedInstitution: const ConnectInstitution(
-    id: "5f2d08be60b92e2888287702",
+    id: '5f2d08be60b92e2888287702',
     authMethod: ConnectAuthMethod.mobileBanking,
   ),
   reference: 'testref',
@@ -129,7 +130,7 @@ ElevatedButton(
 - [`onClose`](#onClose)
 - [`onEvent`](#onEvent)
 - [`reference`](#reference)
-- [`reauthCode`](#reauthCode)
+- [`accountId`](#accountId)
 - [`selectedInstitution`](#selectedInstitution)
 
 ### <a name="publicKey"></a> `publicKey`
@@ -151,11 +152,11 @@ final config = ConnectConfiguration(
 
 ```dart
 // Existing customer
-final existingCustomer = MonoExistingCustomer(id: "6759f68cb587236111eac1d4");
+final existingCustomer = MonoExistingCustomer(id: '6759f68cb587236111eac1d4');
 
 // new customer
-final identity = MonoCustomerIdentity(type: "bvn", number: "2323233239");
-final newCustomer = MonoNewCustomer(name: "Samuel Olumide", email: "samuel.olumide@gmail.com", identity: identity);
+final identity = MonoCustomerIdentity(type: 'bvn', number: '2323233239');
+final newCustomer = MonoNewCustomer(name: 'Samuel Olamide', email: 'samuel.olumide@gmail.com', identity: identity);
 
 final config = ConnectConfiguration(
   publicKey: 'test_pk_...',
@@ -164,6 +165,7 @@ final config = ConnectConfiguration(
   },
   customer: const MonoCustomer(
     newCustomer: newCustomer,
+    // or
     existingCustomer: existingCustomer,
   ),
 );
@@ -191,7 +193,7 @@ The optional closure is called when a user has specifically exited the Mono Conn
 
 ```dart
 final config = ConnectConfiguration(
-  publicKey: 'your_public_key',
+  publicKey: 'test_pk_...',
   onSuccess: (code) {
     log('Success with code: $code');
   },
@@ -211,7 +213,7 @@ See the [ConnectEvent](#ConnectEvent) object below for details.
 
 ```dart
 final config = ConnectConfiguration(
-  publicKey: 'your_public_key',
+  publicKey: 'test_pk_...',
   onSuccess: (code) {
     log('Success with code: $code');
   },
@@ -229,7 +231,7 @@ When passing a reference to the configuration it will be passed back on all onEv
 
 ```dart
 final config = ConnectConfiguration(
-  publicKey: 'your_public_key',
+  publicKey: 'test_pk_...',
   onSuccess: (code) {
     log('Success with code: $code');
   },
@@ -238,8 +240,156 @@ final config = ConnectConfiguration(
 );
 ```
 
-### <a name="reauthCode"></a> `reauthCode`
+### <a name="accountId"></a> `accountId`
 **String: Optional**
+
+### Re-authorizing an Account with Mono: A Step-by-Step Guide
+#### Step 1: Fetch Account ID for previously linked account
+
+Fetch the Account ID of the linked account from the Mono [dashboard](https://app.mono.co/customers).
+
+Alternatively, make an API call to the [Exchange Token Endpoint](https://api.withmono.com/v2/accounts/auth) with the code from a successful linking and your mono application secret key. If successful, this will return an Account ID.
+
+##### Sample request:
+```shell
+curl --request POST \
+  --url https://api.withmono.com/v2/accounts/auth \
+  --header 'Content-Type: application/json' \
+  --header 'accept: application/json' \
+  --header 'mono-sec-key: your_secret_key' \
+  --data '{"code":"string"}'
+```
+
+##### Sample response:
+```json
+{
+  "id": "661d759280dbf646242634cc"
+}
+```
+
+#### Step 2: Initiate your SDK with re-authorisation config option
+Pass the customer's Account ID to your config option in your installed SDK. Implementation example provided below for the Flutter SDK
+
+```dart
+final config = ConnectConfiguration(
+  publicKey: 'test_pk_...', // your publicKey
+  onSuccess: (code) {
+    log('Success with code: $code');
+  },
+  customer: customer,
+  reference: 'reference',
+  accountId: 'customer-account-id',
+  onEvent: (event) {
+    log(event.toString());
+  },
+);
+```
+
+#### Step 3: Relaunch widget with re-authorisation code
+In this final step, ensure the widget is relaunched with the new config. Once opened the user provides a security information which can be: password, pin, OTP, token, security answer etc.
+If the re-authorisation process is successful, the user's account becomes re-authorised after which two things happen.
+a. The 'mono.events.account_reauthorized' webhook event is sent to the webhook URL that you specified on your dashboard app.
+b. Updated financial data gets returned on the Mono connect data APIs when an API request is been made.
+
+##### Example:
+
+```dart
+MonoConnect.launch(
+  context,
+  config: config,
+  shouldReauthorise: true,
+  showLogs: true,
+);
+```
+
+
+## API Reference
+
+### MonoConnect Object
+
+The MonoConnect Object exposes methods that take a [ConnectConfiguration](#ConnectConfiguration) for easy interaction with the Mono Connect Widget.
+
+### <a name="ConnectConfiguration"></a> ConnectConfiguration
+
+The configuration option is passed to the different launch methods from the MonoConnect Object.
+
+```dart
+publicKey: String // required
+onSuccesss: void Function(String) // required
+customer: MonoCustomer, // required
+onClose: VoidCallback // optional
+onEvent: void Function(ConnectEvent) // optional
+reference: String // optional
+accountId: String // optional
+selectedInstitution: ConnectInstitution // optional
+extras: Map<String, dynamic> // optional
+```
+#### Usage
+
+```dart
+final config = ConnectConfiguration(
+  publicKey: 'test_pk_...', // your publicKey
+  onSuccess: (code) {
+    log('Success with code: $code');
+  },
+  customer: const MonoCustomer(
+    newCustomer: MonoNewCustomer(...),
+    // or
+    existingCustomer: MonoExistingCustomer(...),
+  ),
+  selectedInstitution: const ConnectInstitution(
+    id: '5f2d08be60b92e2888287702',
+    authMethod: ConnectAuthMethod.mobileBanking,
+  ),
+  reference: 'random_string',
+  // accountId: '65faa4ae64b5baaa044cb0c3',
+  // scope: 'payments',
+  // extras: {
+  //   'payment_id': 'txreq_mwvphn2xxw',
+  // },
+  onEvent: (event) {
+    log(event.toString());
+  },
+  onClose: () {
+    log('Widget closed.');
+  },
+);
+```
+
+### <a name="connectEvent"></a> ConnectEvent
+
+#### <a name="type"></a> `type: ConnectEventType`
+
+Event types correspond to the `type` key returned by the event data. Possible options are in the table below.
+
+| Event Name          | Description |
+|---------------------| ----------- |
+| opened              | Triggered when the user opens the Connect Widget. |
+| exit                | Triggered when the user closes the Connect Widget. |
+| institutionSelected | Triggered when the user selects an institution. |
+| authMethodSwitched  | Triggered when the user changes authentication method from internet to mobile banking, or vice versa. |
+| submitCredentials   | Triggered when the user presses Log in. |
+| accountLinked       | Triggered when the user successfully links their account. |
+| accountSelected     | Triggered when the user selects a new account. |
+| error               | Triggered when the widget reports an error.|
+
+#### <a name="dataObject"></a> `data: ConnectEventData`
+The data object of type ConnectEventData returned from the onEvent callback.
+
+```dart
+eventType: String // type of event mono.connect.xxxx
+reference: String? // reference passed through the connect config
+pageName: String? // name of page the widget exited on
+prevAuthMethod: String? // auth method before it was last changed
+authMethod: String? // current auth method
+mfaType: String? // type of MFA the current user/bank requires
+selectedAccountsCount: Int? // number of accounts selected by the user
+errorType: String? // error thrown by widget
+errorMessage: String? // error message describing the error
+institutionId: String? // id of institution
+institutionName: String? // name of institution
+timestamp: DateTime // timestamp of the event as a DateTime object
+```
 
 ## Support
 If you're having general trouble with Mono Connect Flutter SDK or your Mono integration, please reach out to us at <hi@mono.co> or come chat with us on Slack. We're proud of our level of service, and we're more than happy to help you out with your integration to Mono.
