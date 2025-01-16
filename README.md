@@ -246,7 +246,7 @@ final config = ConnectConfiguration(
 ### Re-authorizing an Account with Mono: A Step-by-Step Guide
 #### Step 1: Fetch Account ID for previously linked account
 
-Fetch the Account ID of the linked account from the Mono [dashboard](https://app.mono.co/customers).
+Fetch the Account ID of the linked account from the [Mono dashboard](https://app.mono.co/customers).
 
 Alternatively, make an API call to the [Exchange Token Endpoint](https://api.withmono.com/v2/accounts/auth) with the code from a successful linking and your mono application secret key. If successful, this will return an Account ID.
 
@@ -285,7 +285,7 @@ final config = ConnectConfiguration(
 );
 ```
 
-#### Step 3: Relaunch widget with re-authorisation code
+#### Step 3: Relaunch widget
 In this final step, ensure the widget is relaunched with the new config. Once opened the user provides a security information which can be: password, pin, OTP, token, security answer etc.
 If the re-authorisation process is successful, the user's account becomes re-authorised after which two things happen.
 a. The 'mono.events.account_reauthorized' webhook event is sent to the webhook URL that you specified on your dashboard app.
