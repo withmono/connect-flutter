@@ -3,7 +3,7 @@ description: The Mono Connect SDK is a quick and secure way to link bank account
 homepage: https://docs.mono.co/docs/financial-data/overview
 repository: https://github.com/withmono/connect-flutter
 issue_tracker: https://github.com/withmono/connect-flutter/issues
-version: 2.0.0-alpha.1
+version: 2.0.0
 
 
 environment:
