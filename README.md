@@ -6,11 +6,11 @@
 
 The Mono Connect SDK is a quick and secure way to link bank accounts to Mono from within your Flutter app. Mono Connect is a drop-in framework that handles connecting a financial institution to your app (credential validation, multi-factor authentication, error handling, etc).
 
-For accessing customer accounts and interacting with Mono's API (Identity, Transactions, Income, DirectPay) use the server-side [Mono API](https://docs.mono.co/docs).
+For accessing customer accounts and interacting with Mono's API (Identity, Transactions, Income, DirectPay) use the server-side [Mono API](https://docs.mono.co/api).
 
 ## Documentation
 
-For complete information about Mono Connect, head to the [docs](https://docs.mono.co/docs).
+For complete information about Mono Connect, head to the [docs](https://docs.mono.co/docs/financial-data/overview).
 
 ## Getting Started
 
@@ -246,7 +246,7 @@ final config = ConnectConfiguration(
 ### Re-authorizing an Account with Mono: A Step-by-Step Guide
 #### Step 1: Fetch Account ID for previously linked account
 
-Fetch the Account ID of the linked account from the [Mono dashboard](https://app.mono.co/customers).
+Fetch the Account ID of the linked account from the [Mono dashboard](https://app.mono.co/customers) or [API](https://docs.mono.co/docs/customers).
 
 Alternatively, make an API call to the [Exchange Token Endpoint](https://api.withmono.com/v2/accounts/auth) with the code from a successful linking and your mono application secret key. If successful, this will return an Account ID.
 
@@ -268,7 +268,7 @@ curl --request POST \
 ```
 
 #### Step 2: Initiate your SDK with re-authorisation config option
-Pass the customer's Account ID to your config option in your installed SDK. Implementation example provided below for the Flutter SDK
+With step one out of the way, pass the customer's Account ID to your config option in your installed SDK. Implementation example provided below for the Flutter SDK
 
 ```dart
 final config = ConnectConfiguration(
@@ -285,8 +285,8 @@ final config = ConnectConfiguration(
 );
 ```
 
-#### Step 3: Relaunch widget
-In this final step, ensure the widget is relaunched with the new config. Once opened the user provides a security information which can be: password, pin, OTP, token, security answer etc.
+#### Step 3: Trigger re-authorisation widget
+In this final step, ensure the widget is launched with the new config. Once opened the user provides a security information which can be: password, pin, OTP, token, security answer etc.
 If the re-authorisation process is successful, the user's account becomes re-authorised after which two things happen.
 a. The 'mono.events.account_reauthorized' webhook event is sent to the webhook URL that you specified on your dashboard app.
 b. Updated financial data gets returned on the Mono connect data APIs when an API request is been made.

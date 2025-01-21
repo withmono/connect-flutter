@@ -53,7 +53,7 @@ class ConnectConfiguration {
   /// ### Example:
   /// ```json
   /// {
-  ///   payment_id: "PAYMENT_ID" // The `id` property returned from the Initiate Payments API.
+  ///   payment_id: "PAYMENT_ID" // The `id` property returned from the Initiate Payments API response object.
   /// }
   /// ```
   final Map<String, dynamic>? extras;
