@@ -320,6 +320,7 @@ customer: MonoCustomer, // required
 onClose: VoidCallback // optional
 onEvent: void Function(ConnectEvent) // optional
 reference: String // optional
+scope: String // optional
 accountId: String // optional
 selectedInstitution: ConnectInstitution // optional
 extras: Map<String, dynamic> // optional

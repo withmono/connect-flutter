@@ -65,7 +65,10 @@ class MonoConnect {
       MaterialPageRoute<dynamic>(
         builder: (c) => _webView(
           config.copyWith(
-            scope: shouldReauthorise ? Constants.reAuthScope : null,
+            scope: _resolveScope(
+              config,
+              shouldReauthorise: shouldReauthorise,
+            ),
           ),
           showLogs: showLogs,
         ),
@@ -101,7 +104,10 @@ class MonoConnect {
           borderRadius: BorderRadius.circular(24),
           child: _webView(
             config.copyWith(
-              scope: shouldReauthorise ? Constants.reAuthScope : null,
+              scope: _resolveScope(
+                config,
+                shouldReauthorise: shouldReauthorise,
+              ),
             ),
             showLogs: showLogs,
           ),
@@ -141,10 +147,23 @@ class MonoConnect {
       clipBehavior: Clip.hardEdge,
       builder: (_) => _webView(
         config.copyWith(
-          scope: shouldReauthorise ? Constants.reAuthScope : null,
+          scope: _resolveScope(
+            config,
+            shouldReauthorise: shouldReauthorise,
+          ),
         ),
         showLogs: showLogs,
       ),
     );
+  }
+
+  static String? _resolveScope(
+    ConnectConfiguration config, {
+    required bool shouldReauthorise,
+  }) {
+    return shouldReauthorise &&
+            (config.scope == null || config.scope == Constants.authScope)
+        ? Constants.reAuthScope
+        : null;
   }
 }

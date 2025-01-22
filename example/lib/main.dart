@@ -56,7 +56,7 @@ class _MyHomePageState extends State<MyHomePage> {
     //   authMethod: ConnectAuthMethod.mobileBanking,
     // ),
     reference: DateTime.now().millisecondsSinceEpoch.toString(),
-    // accountId: '65bb8ab6ed5e47f3015254f6',
+    // accountId: '65faa4ae64b5baaa044cb0c3',
     // scope: 'payments',
     // extras: {
     //   'payment_id': 'txreq_mwvphn2xxw',

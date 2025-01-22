@@ -30,7 +30,7 @@ class ConnectConfiguration {
   final MonoCustomer customer;
 
   /// The scope for the widget initialisation. Options: auth, reauth, payments
-  final String scope;
+  final String? scope;
 
   /// An optional reference to the current instance of Mono Connect.
   /// This value will be included in all [onEvent] callbacks for tracking purposes.

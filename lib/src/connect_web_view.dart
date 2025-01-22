@@ -66,7 +66,7 @@ class ConnectWebView extends StatefulWidget {
   /// `auth`
   /// `reauth`
   /// `payments`
-  final String scope;
+  final String? scope;
 
   /// An optional reference to the current instance of Mono Connect.
   /// This value will be included in all [onEvent] callbacks for tracking purposes.
@@ -272,7 +272,7 @@ class _ConnectWebViewState extends State<ConnectWebView> {
     final queryParameters = {
       'key': widget.publicKey,
       'version': Constants.version,
-      'scope': widget.scope,
+      'scope': widget.scope ?? Constants.authScope,
       'data': data,
       if (widget.reference != null) 'reference': widget.reference,
       if (institution != null) 'selectedInstitution': institution,
