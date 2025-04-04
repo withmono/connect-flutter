@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:mono_connect/src/connect_web_view.dart';
-import 'package:mono_connect/src/models/connect_configuration.dart';
+import 'package:mono_connect/src/models/models.dart';
 import 'package:mono_connect/src/utils/constants.dart';
 
 /// The Mono Connect SDK is a quick and secure way to link bank accounts to Mono from within your Flutter app.
@@ -11,6 +14,8 @@ import 'package:mono_connect/src/utils/constants.dart';
 /// This class serves as the entry point for interacting with the Mono Connect SDK in Flutter,
 /// offering multiple ways to present the Mono Connect WebView widget to users.
 class MonoConnect {
+  static MethodChannel channel = const MethodChannel('flutter.mono.co/connect');
+
   /// Returns the Mono Connect WebView widget configured with the provided [ConnectConfiguration].
   ///
   /// This method is used to initialize and return the `ConnectWebView` widget with the specified
@@ -18,16 +23,74 @@ class MonoConnect {
   /// on non-web platforms.
   static Widget _webView(
     ConnectConfiguration config, {
+    bool shouldReauthorise = false,
     bool showLogs = false,
   }) {
-    if (!kIsWeb) {
-      return ConnectWebView.config(
-        config: config,
-        showLogs: showLogs,
-      );
+    return ConnectWebView.config(
+      config: config.copyWith(
+        scope: _resolveScope(
+          config.scope,
+          shouldReauthorise: shouldReauthorise,
+        ),
+      ),
+      showLogs: showLogs,
+    );
+  }
+
+  static void _open(ConnectConfiguration config) {
+    final customerJson = {'customer': config.customer.toMap()};
+    final json = {
+      if (config.extras != null) ...config.extras!,
+      ...customerJson,
+    };
+
+    String? institution;
+    if (config.selectedInstitution != null) {
+      institution = config.selectedInstitution!.toJson();
     }
 
-    return const SizedBox(child: Text('Web is not supported'));
+    channel
+      ..invokeMethod('setup', {
+        'key': config.publicKey,
+        'version': Constants.version,
+        'scope': config.scope ?? Constants.authScope,
+        'data': jsonEncode(json),
+        if (config.accountId != null) 'account': config.accountId,
+        if (config.reference != null) 'reference': config.reference,
+        if (institution != null) 'selectedInstitution': institution,
+      })
+      ..setMethodCallHandler((call) async {
+        switch (call.method) {
+          case 'onClose':
+            config.onClose?.call();
+
+            return true;
+          case 'onSuccess':
+            final args = (jsonDecode(call.arguments.toString())
+                    as Map<Object?, Object?>)
+                .map<String, Object?>((key, value) => MapEntry('$key', value));
+
+            config.onSuccess(args['code'].toString());
+
+            return true;
+          case 'onEvent':
+            if (config.onEvent != null) {
+              final args = (call.arguments as Map<Object?, Object?>)
+                  .map<String, Object?>(
+                (key, value) => MapEntry('$key', value),
+              );
+
+              final data = {
+                ...(jsonDecode(args['data'].toString())
+                    as Map<String, dynamic>),
+                'type': args['eventName'],
+              };
+
+              config.onEvent!(ConnectEvent.fromMap({...args, 'data': data}));
+            }
+            return true;
+        }
+      });
   }
 
   /// Launches the Mono Connect WebView widget in a new full-screen page.
@@ -60,16 +123,23 @@ class MonoConnect {
       'Invalid state: accountId must not be null if shouldReauthorise is true, and must be null otherwise.',
     );
 
+    if (kIsWeb) {
+      return _open(
+        config.copyWith(
+          scope: _resolveScope(
+            config.scope,
+            shouldReauthorise: shouldReauthorise,
+          ),
+        ),
+      );
+    }
+
     Navigator.push(
       context,
       MaterialPageRoute<dynamic>(
         builder: (c) => _webView(
-          config.copyWith(
-            scope: _resolveScope(
-              config,
-              shouldReauthorise: shouldReauthorise,
-            ),
-          ),
+          config,
+          shouldReauthorise: shouldReauthorise,
           showLogs: showLogs,
         ),
       ),
@@ -96,6 +166,10 @@ class MonoConnect {
       'Invalid state: accountId must not be null if shouldReauthorise is true, and must be null otherwise.',
     );
 
+    if (kIsWeb) {
+      throw UnsupportedError('Web is not supported for this method. Please use MonoConnect.launch(context, config: config) for web.');
+    }
+
     showDialog<dynamic>(
       context: context,
       builder: (_) => Padding(
@@ -103,12 +177,8 @@ class MonoConnect {
         child: ClipRRect(
           borderRadius: BorderRadius.circular(24),
           child: _webView(
-            config.copyWith(
-              scope: _resolveScope(
-                config,
-                shouldReauthorise: shouldReauthorise,
-              ),
-            ),
+            config,
+            shouldReauthorise: shouldReauthorise,
             showLogs: showLogs,
           ),
         ),
@@ -135,6 +205,10 @@ class MonoConnect {
       'Invalid state: accountId must not be null if shouldReauthorise is true, and must be null otherwise.',
     );
 
+    if (kIsWeb) {
+      throw UnsupportedError('Web is not supported for this method. Please use MonoConnect.launch(context, config: config) for web.');
+    }
+
     showModalBottomSheet<dynamic>(
       context: context,
       useSafeArea: true,
@@ -146,23 +220,18 @@ class MonoConnect {
       ),
       clipBehavior: Clip.hardEdge,
       builder: (_) => _webView(
-        config.copyWith(
-          scope: _resolveScope(
-            config,
-            shouldReauthorise: shouldReauthorise,
-          ),
-        ),
+        config,
+        shouldReauthorise: shouldReauthorise,
         showLogs: showLogs,
       ),
     );
   }
 
   static String? _resolveScope(
-    ConnectConfiguration config, {
+    String? scope, {
     required bool shouldReauthorise,
   }) {
-    return shouldReauthorise &&
-            (config.scope == null || config.scope == Constants.authScope)
+    return shouldReauthorise && (scope == null || scope == Constants.authScope)
         ? Constants.reAuthScope
         : null;
   }
