@@ -122,6 +122,37 @@ ElevatedButton(
 )
 ```
 
+#### For Web Support
+
+- Add the following to your `index.html` file:
+
+```html
+<script src="https://connect.withmono.com/connect.js" async></script>
+<script>
+    function setupMonoConnect(key, reference, data, accountId, scope) {
+      const config = JSON.parse(`${data}`);
+      const options = {
+        key,
+        reference,
+        scope,
+        onSuccess: onSuccess,
+        onEvent: onEvent,
+        onClose: onClose,
+      };
+
+      const MonoConnect = new Connect(options);
+
+      MonoConnect.setup(config);
+
+      if(accountId && String(accountId).length > 0) {
+        MonoConnect.reauthorise(accountId);
+      }
+
+      MonoConnect.open();
+    }
+</script>
+```
+
 ## Configuration Options
 
 - [`publicKey`](#publicKey)
