@@ -1,3 +1,7 @@
+# 2.1.0
+
+- feat: add support for Flutter on the web
+
 # 2.0.1
 
 - fix: prioritise `scope` provided in widget configuration
