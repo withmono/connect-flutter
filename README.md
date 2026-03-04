@@ -271,6 +271,28 @@ final config = ConnectConfiguration(
 );
 ```
 
+### <a name="checkAccountMatch"></a> `checkAccountMatch`
+**bool: Optional**
+
+The Account Match feature allows you to verify that the account number provided by a customer matches the account number returned from their linked bank account.
+
+```dart
+final config = ConnectConfiguration(
+  publicKey: 'test_pk_...',
+  onSuccess: (code) {
+    log('Success with code: $code');
+  },
+  customer: customer,
+  selectedInstitution: const ConnectInstitution(
+    id: '5f2d08bf60b92e2888287704',
+    authMethod: ConnectAuthMethod.internetBanking,
+    accountNumber: '02605538421',
+  ),
+  reference: 'random_string',
+  checkAccountMatch: true,
+);
+```
+
 ### <a name="accountId"></a> `accountId`
 **String: Optional**
 
@@ -374,6 +396,7 @@ final config = ConnectConfiguration(
     authMethod: ConnectAuthMethod.mobileBanking,
   ),
   reference: 'random_string',
+  // checkAccountMatch: false,
   // accountId: '65faa4ae64b5baaa044cb0c3',
   // scope: 'payments',
   // extras: {

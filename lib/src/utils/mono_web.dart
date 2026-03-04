@@ -1,13 +1,12 @@
 import 'dart:js_interop';
-import 'dart:js_util' as js_util;
 
 /// Interop with the global [MonoConnect] JavaScript object.
 @JS('MonoConnect')
-@staticInterop
-class MonoConnect {
-  external static void setup(JSAny? obj);
+external MonoConnectNamespace get MonoConnect;
 
-  external static void open();
+extension type MonoConnectNamespace._(JSAny _) implements JSAny {
+  external void setup(JSAny? obj);
+  external void open();
 }
 
 /// Interop with the global [setupMonoConnect] function.
@@ -20,9 +19,9 @@ external void setupMonoConnect(
   String? scope,
 );
 
-dynamic jsToDart(Object data) {
+dynamic jsToDart(JSAny? data) {
   try {
-    return js_util.dartify(data);
+    return data?.dartify();
   } catch (e) {
     throw Exception('Unable to convert JS object to Dart: $e');
   }

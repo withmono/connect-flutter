@@ -26,6 +26,7 @@ class ConnectWebView extends StatefulWidget {
     super.key,
     this.reference,
     this.accountId,
+    this.checkAccountMatch,
     this.onEvent,
     this.onClose,
     this.selectedInstitution,
@@ -44,6 +45,7 @@ class ConnectWebView extends StatefulWidget {
         scope = config.scope,
         reference = config.reference,
         accountId = config.accountId,
+        checkAccountMatch = config.checkAccountMatch,
         onEvent = config.onEvent,
         onClose = config.onClose,
         selectedInstitution = config.selectedInstitution,
@@ -74,6 +76,9 @@ class ConnectWebView extends StatefulWidget {
 
   /// Account ID is returned from token exchange for a previously linked account.
   final String? accountId;
+
+  /// Set to true to enable account match verification.
+  final bool? checkAccountMatch;
 
   /// Callback triggered whenever an event is dispatched by the Mono Connect widget.
   final void Function(ConnectEvent event)? onEvent;
@@ -274,6 +279,8 @@ class _ConnectWebViewState extends State<ConnectWebView> {
       'version': Constants.version,
       'scope': widget.scope ?? Constants.authScope,
       'data': data,
+      if (widget.checkAccountMatch != null)
+        'check_account_match': widget.checkAccountMatch,
       if (widget.reference != null) 'reference': widget.reference,
       if (institution != null) 'selectedInstitution': institution,
     };
