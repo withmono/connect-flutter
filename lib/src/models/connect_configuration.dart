@@ -40,10 +40,10 @@ class ConnectConfiguration {
   /// Account ID is returned from token exchange for a previously linked account.
   final String? accountId;
 
-  /// Set to true to enable account match verification.
+  /// Validate linked account number match against customer account number.
   final bool? checkAccountMatch;
 
-  /// Validate linked account number match against customer account number.
+  /// Callback triggered when the Mono Connect widget is closed.
   final VoidCallback? onClose;
 
   /// Callback triggered whenever an event is dispatched by the Mono Connect widget.
