@@ -1,11 +1,11 @@
 import 'dart:convert';
-import 'dart:html' as html show window;
-import 'dart:js' show allowInterop;
-import 'dart:js_util' as js_util;
+import 'dart:js_interop';
+import 'dart:js_interop_unsafe';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'package:mono_connect/src/utils/mono_web.dart';
+import 'package:web/web.dart' as web;
 
 class MonoConnectWeb {
   static void registerWith(Registrar registrar) {
@@ -31,23 +31,22 @@ class MonoConnectWeb {
           channel.invokeMethod('onClose', <dynamic, dynamic>{});
         }
 
-        void onEvent(String eventName, Object data) {
+        void onEvent(JSString eventName, JSAny? data) {
           final dartData = jsToDart(data);
           channel.invokeMethod(
             'onEvent',
-            {'eventName': eventName, 'data': jsonEncode(dartData)},
+            {'eventName': eventName.toDart, 'data': jsonEncode(dartData)},
           );
         }
 
-        void onSuccess(Object data) {
+        void onSuccess(JSAny? data) {
           final dartData = jsToDart(data);
           channel.invokeMethod('onSuccess', jsonEncode(dartData));
         }
 
-        js_util.setProperty(html.window, 'onClose', allowInterop(onClose));
-        js_util.setProperty(html.window, 'onEvent', allowInterop(onEvent));
-        js_util.setProperty(html.window, 'onSuccess', allowInterop(onSuccess));
-
+        web.window.setProperty('onClose'.toJS, onClose.toJS);
+        web.window.setProperty('onEvent'.toJS, onEvent.toJS);
+        web.window.setProperty('onSuccess'.toJS, onSuccess.toJS);
         final args = call.arguments as Map<dynamic, dynamic>;
 
         setupMonoConnect(
@@ -72,7 +71,7 @@ class MonoConnectWeb {
   }
 
   Future<String> getPlatformVersion() {
-    final version = html.window.navigator.userAgent;
+    final version = web.window.navigator.userAgent;
     return Future.value(version);
   }
 }

@@ -34,7 +34,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final config = ConnectConfiguration(
-    publicKey: 'your_public_key',
+    publicKey: 'test_pk_pxvk0yhvgfbn44f2i0q1',
     onSuccess: (code) {
       log('Success with code: $code');
     },
@@ -47,19 +47,20 @@ class _MyHomePageState extends State<MyHomePage> {
           number: '2323233239',
         ),
       ),
-      existingCustomer: MonoExistingCustomer(
-        id: "6759f68cb587236111eac1d4",
-      ),
+      // existingCustomer: MonoExistingCustomer(
+      //   id: "6759f68cb587236111eac1d4",
+      // ),
     ),
-    // selectedInstitution: const ConnectInstitution(
-    //   id: '5f2d08be60b92e2888287702',
-    //   authMethod: ConnectAuthMethod.mobileBanking,
-    // ),
+    selectedInstitution: const ConnectInstitution(
+      id: '5f2d08be60b92e2888287702',
+      authMethod: ConnectAuthMethod.mobileBanking,
+    ),
     reference: DateTime.now().millisecondsSinceEpoch.toString(),
+    // checkAccountMatch: true,
     // accountId: '65faa4ae64b5baaa044cb0c3',
     // scope: 'payments',
     // extras: {
-    //   'payment_id': 'txreq_mwvphn2xxw',
+    //   'payment_id': 'txreq_m2uqpvcv6u',
     // },
     onEvent: (event) {
       log(event.toString());
