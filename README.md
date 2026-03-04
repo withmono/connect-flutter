@@ -163,6 +163,7 @@ ElevatedButton(
 - [`reference`](#reference)
 - [`accountId`](#accountId)
 - [`selectedInstitution`](#selectedInstitution)
+- [`checkAccountMatch`](#checkAccountMatch)
 
 ### <a name="publicKey"></a> `publicKey`
 **String: Required**
@@ -271,28 +272,6 @@ final config = ConnectConfiguration(
 );
 ```
 
-### <a name="checkAccountMatch"></a> `checkAccountMatch`
-**bool: Optional**
-
-The Account Match feature allows you to verify that the account number provided by a customer matches the account number returned from their linked bank account.
-
-```dart
-final config = ConnectConfiguration(
-  publicKey: 'test_pk_...',
-  onSuccess: (code) {
-    log('Success with code: $code');
-  },
-  customer: customer,
-  selectedInstitution: const ConnectInstitution(
-    id: '5f2d08bf60b92e2888287704',
-    authMethod: ConnectAuthMethod.internetBanking,
-    accountNumber: '02605538421',
-  ),
-  reference: 'random_string',
-  checkAccountMatch: true,
-);
-```
-
 ### <a name="accountId"></a> `accountId`
 **String: Optional**
 
@@ -355,6 +334,51 @@ MonoConnect.launch(
 );
 ```
 
+### <a name="selectedInstitution"></a> `selectedInstitution`
+**ConnectInstitution: Optional**
+
+Passing a ConnectInstitution will open the widget directly to the institution passed in the `id` field and
+will only allow the user to login to that institution and authentication method. You can pass `.mobileBanking` or
+`.internetBanking` as possible options for the `authMethod`. To use the [account match feature](#checkAccountMatch),
+pass the customer's `accountNumber`.
+
+```dart
+final config = ConnectConfiguration(
+  publicKey: 'test_pk_...',
+  onSuccess: (code) {
+    log('Success with code: $code');
+  },
+  customer: customer,
+  selectedInstitution: const ConnectInstitution(
+    id: '5f2d08bf60b92e2888287704',
+    authMethod: ConnectAuthMethod.internetBanking,
+    accountNumber: '02605538421',
+  ),
+  reference: 'random_string',
+);
+```
+
+### <a name="checkAccountMatch"></a> `checkAccountMatch`
+**bool: Optional**
+
+The Account Match feature allows you to verify that the account number provided by a customer matches the account number returned from their linked bank account.
+
+```dart
+final config = ConnectConfiguration(
+  publicKey: 'test_pk_...',
+  onSuccess: (code) {
+    log('Success with code: $code');
+  },
+  customer: customer,
+  selectedInstitution: const ConnectInstitution(
+    id: '5f2d08bf60b92e2888287704',
+    authMethod: ConnectAuthMethod.internetBanking,
+    accountNumber: '02605538421',
+  ),
+  reference: 'random_string',
+  checkAccountMatch: true,
+);
+```
 
 ## API Reference
 
@@ -376,6 +400,7 @@ reference: String // optional
 scope: String // optional
 accountId: String // optional
 selectedInstitution: ConnectInstitution // optional
+checkAccountMatch: bool // optional
 extras: Map<String, dynamic> // optional
 ```
 #### Usage
