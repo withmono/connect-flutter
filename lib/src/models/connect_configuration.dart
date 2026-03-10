@@ -79,6 +79,7 @@ class ConnectConfiguration {
       scope: scope ?? this.scope,
       reference: reference ?? this.reference,
       accountId: accountId ?? this.accountId,
+      checkAccountMatch: checkAccountMatch ?? this.checkAccountMatch,
       onClose: onClose ?? this.onClose,
       onEvent: onEvent ?? this.onEvent,
       selectedInstitution: selectedInstitution ?? this.selectedInstitution,
