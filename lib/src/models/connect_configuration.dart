@@ -12,6 +12,7 @@ class ConnectConfiguration {
     this.scope = Constants.authScope,
     this.reference,
     this.accountId,
+    this.checkAccountMatch,
     this.onClose,
     this.onEvent,
     this.selectedInstitution,
@@ -39,6 +40,9 @@ class ConnectConfiguration {
   /// Account ID is returned from token exchange for a previously linked account.
   final String? accountId;
 
+  /// Validate linked account number match against customer account number.
+  final bool? checkAccountMatch;
+
   /// Callback triggered when the Mono Connect widget is closed.
   final VoidCallback? onClose;
 
@@ -62,6 +66,7 @@ class ConnectConfiguration {
     String? scope,
     String? reference,
     String? accountId,
+    bool? checkAccountMatch,
     VoidCallback? onClose,
     void Function(ConnectEvent)? onEvent,
     ConnectInstitution? selectedInstitution,
@@ -74,6 +79,7 @@ class ConnectConfiguration {
       scope: scope ?? this.scope,
       reference: reference ?? this.reference,
       accountId: accountId ?? this.accountId,
+      checkAccountMatch: checkAccountMatch ?? this.checkAccountMatch,
       onClose: onClose ?? this.onClose,
       onEvent: onEvent ?? this.onEvent,
       selectedInstitution: selectedInstitution ?? this.selectedInstitution,

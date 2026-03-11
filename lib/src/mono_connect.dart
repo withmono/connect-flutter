@@ -57,6 +57,8 @@ class MonoConnect {
         'data': jsonEncode(json),
         if (config.accountId != null) 'account': config.accountId,
         if (config.reference != null) 'reference': config.reference,
+        if (config.checkAccountMatch != null)
+          'check_account_match': config.checkAccountMatch,
         if (institution != null) 'selectedInstitution': institution,
       })
       ..setMethodCallHandler((call) async {
@@ -167,7 +169,9 @@ class MonoConnect {
     );
 
     if (kIsWeb) {
-      throw UnsupportedError('Web is not supported for this method. Please use MonoConnect.launch(context, config: config) for web.');
+      throw UnsupportedError(
+        'Web is not supported for this method. Please use MonoConnect.launch(context, config: config) for web.',
+      );
     }
 
     showDialog<dynamic>(
@@ -206,7 +210,9 @@ class MonoConnect {
     );
 
     if (kIsWeb) {
-      throw UnsupportedError('Web is not supported for this method. Please use MonoConnect.launch(context, config: config) for web.');
+      throw UnsupportedError(
+        'Web is not supported for this method. Please use MonoConnect.launch(context, config: config) for web.',
+      );
     }
 
     showModalBottomSheet<dynamic>(
