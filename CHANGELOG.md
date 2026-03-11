@@ -1,3 +1,7 @@
+# 2.2.0
+
+- feat: add support for Account Match feature
+
 # 2.1.0
 
 - feat: add support for Flutter on the web
