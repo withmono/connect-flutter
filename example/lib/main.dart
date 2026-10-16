@@ -34,7 +34,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final config = ConnectConfiguration(
-    publicKey: 'test_pk_pxvk0yhvgfbn44f2i0q1',
+    publicKey: 'your_public_key',
     onSuccess: (code) {
       log('Success with code: $code');
     },
