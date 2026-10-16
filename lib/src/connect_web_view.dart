@@ -313,7 +313,6 @@ class _ConnectWebViewState extends State<ConnectWebView> {
         switch (type) {
           case 'mono.connect.widget.account_linked':
             final code = data['code'] as String? ?? '';
-            Navigator.pop(context);
             widget.onSuccess.call(code);
           case 'mono.connect.widget.closed':
             Navigator.pop(context);
