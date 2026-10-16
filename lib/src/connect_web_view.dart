@@ -280,7 +280,7 @@ class _ConnectWebViewState extends State<ConnectWebView> {
       'scope': widget.scope ?? Constants.authScope,
       'data': data,
       if (widget.checkAccountMatch != null)
-        'check_account_match': widget.checkAccountMatch,
+        'check_account_match': '${widget.checkAccountMatch}',
       if (widget.reference != null) 'reference': widget.reference,
       if (institution != null) 'selectedInstitution': institution,
     };
