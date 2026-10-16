@@ -1,3 +1,7 @@
+# 2.3.0
+
+- fix: keep widget open on `account_linked`; dismissal now happens only on the `widget.closed` event
+
 # 2.2.0
 
 - feat: add support for Account Match feature
