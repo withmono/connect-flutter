@@ -277,6 +277,7 @@ class _ConnectWebViewState extends State<ConnectWebView> {
     final queryParameters = {
       'key': widget.publicKey,
       'version': Constants.version,
+      'sdk_version': Constants.sdkVersion,
       'scope': widget.scope ?? Constants.authScope,
       'data': data,
       if (widget.checkAccountMatch != null)

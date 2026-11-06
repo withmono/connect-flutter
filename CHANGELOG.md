@@ -1,3 +1,7 @@
+# 2.4.0
+
+- feat: append `sdk_version` param on widget init so the widget can prompt developers to upgrade outdated SDKs in test mode
+
 # 2.3.0
 
 - fix: keep widget open on `account_linked`; dismissal now happens only on the `widget.closed` event

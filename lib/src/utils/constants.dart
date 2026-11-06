@@ -1,7 +1,11 @@
 // ignore_for_file: constant_identifier_names
 
+import 'package:mono_connect/src/utils/sdk_version.dart' as sdk_version;
+
 class Constants {
   Constants._();
+
+  static const String sdkVersion = sdk_version.sdkVersion;
 
   static const String urlScheme = 'https';
 
